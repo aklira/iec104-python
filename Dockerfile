@@ -2,8 +2,10 @@ FROM python:latest
 
 LABEL Maintainer="Akli RAHMOUN"
 
+COPY ./examples/simple_server.py simple_server.py
+
 RUN python -m pip install c104
 
 EXPOSE 2404
 
-CMD [ "python", "./examples/simple_server.py"]
+CMD [ "python", "simple_server.py"]
