@@ -64,7 +64,7 @@ def main():
     
     # server and station preparation
     server = c104.Server(ip="0.0.0.0", port=2404)
-    station = server.add_station(common_address=47)
+    station = server.add_station(common_address=11509)
 
     # monitoring point preparation
     #point = station.add_point(io_address=11, type=c104.Type.M_ME_NC_1, report_ms=15000)
