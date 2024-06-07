@@ -8,4 +8,4 @@ RUN python -m pip install c104
 
 EXPOSE 2404
 
-CMD [ "python", "simple_server.py"]
+CMD [ "python", "./simple_server.py"]
