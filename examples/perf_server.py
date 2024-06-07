@@ -1,7 +1,8 @@
 import c104
 import random
 import time
-
+import json
+import argparse
 
 def on_step_command(point: c104.Point, previous_state: dict, message: c104.IncomingMessage) -> c104.ResponseState:
     """ handle incoming regulating step command
@@ -25,16 +26,49 @@ def before_transmit(point: c104.Point) -> None:
     point.value = random.random() * 100
     print("{0} BEFORE TRANSMIT on IOA: {1}".format(point.type, point.io_address))
 
+def add_station_points_from_json(json_data, station):
+    """
+    Adds points to a station from a given JSON.
+
+    :param json_data: A dictionary representing the JSON data containing point information.
+    :param station: The station object to which points need to be added.
+    """
+    # Iterate over the datapoints in the JSON
+    for datapoint in json_data['exchanged_data']['datapoints']:
+        # Iterate over protocols for each datapoint
+        for protocol in datapoint['protocols']:
+            if protocol['name'] == 'iec104':
+                # Extract the address part after the dash
+                address = protocol['address'].split('-')[1]
+                
+                # Get the point type from the typeid attribute
+                typeid = getattr(c104.Type, protocol['typeid'], None)
+                
+                if typeid:
+                    # Add the point to the station
+                    point = station.add_point(io_address=address, type=typeid, report_ms=10000)
+                    point.on_before_auto_transmit(callable=before_transmit)
+                    point.on_before_read(callable=before_transmit)
 
 def main():
+    # datapoints configuration preparation
+    parser = argparse.ArgumentParser(description='Parse JSON for datapoints.')
+    parser.add_argument('input_file', help='The input JSON file path')
+
+    args = parser.parse_args()
+
+    # Reading JSON file
+    with open(args.input_file, 'r') as file:
+        json_data = json.load(file)
+
+    
     # server and station preparation
     server = c104.Server(ip="0.0.0.0", port=2404)
     station = server.add_station(common_address=47)
 
     # monitoring point preparation
-    point = station.add_point(io_address=11, type=c104.Type.M_ME_NC_1, report_ms=15000)
-    point.on_before_auto_transmit(callable=before_transmit)
-    point.on_before_read(callable=before_transmit)
+    #point = station.add_point(io_address=11, type=c104.Type.M_ME_NC_1, report_ms=15000)
+    add_station_points_from_json(json_data, station)
 
     # command point preparation
     command = station.add_point(io_address=12, type=c104.Type.C_RC_TA_1)
