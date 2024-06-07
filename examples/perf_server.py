@@ -42,11 +42,11 @@ def add_station_points_from_json(json_data, station):
                 address = protocol['address'].split('-')[1]
                 
                 # Get the point type from the typeid attribute
-                typeid = getattr(c104.Type, protocol['typeid'], None)
+                #typeid = getattr(c104.Type, protocol['typeid'], None)
                 
                 if typeid:
                     # Add the point to the station
-                    point = station.add_point(io_address=address, type=typeid, report_ms=10000)
+                    point = station.add_point(io_address=int(address), type=c104.Type.M_ME_NA_1, report_ms=10000)
                     point.on_before_auto_transmit(callable=before_transmit)
                     point.on_before_read(callable=before_transmit)
 
