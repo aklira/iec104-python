@@ -7,6 +7,6 @@ COPY ./examples/datapoints.json datapoints.json
 
 RUN python -m pip install c104
 
-EXPOSE 2404
+EXPOSE 2404-2414
 
 CMD [ "python", "./server.py", "./datapoints.json"]
