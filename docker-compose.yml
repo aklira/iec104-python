@@ -1,0 +1,8 @@
+# Tested on Docker Compose version v2.27.1 and Docker version 20.10.18
+services:
+  iec104server:
+    image: "ghcr.io/aklira/fledgepower/pyiec104:latest"
+    deploy:
+       replicas: 2
+    ports:
+       - "2404-2405:2404"
